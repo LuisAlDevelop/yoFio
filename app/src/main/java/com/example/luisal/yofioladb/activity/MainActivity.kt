@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.example.luisal.yofioladb.adapters.ImagenViewPagerAdapter
 import com.example.luisal.yofioladb.databinding.ActivityMainBinding
 import com.example.luisal.yofioladb.viewModel.ImageViewModel
 
@@ -19,10 +20,15 @@ class MainActivity : AppCompatActivity() {
         ViewModelProviders.of(this).get(ImageViewModel::class.java)
     }
 
+    private val imagesAdapter: ImagenViewPagerAdapter by lazy {
+        ImagenViewPagerAdapter()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setUpOnClickListener()
+        setUpRecyclerView()
         setUpOnObservable()
         viewModelImage.getImage()
     }
@@ -60,7 +66,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun setUpRecyclerView(){
+        binding.apply {
+            recyclerDataImages.adapter = imagesAdapter
+        }
+    }
+
     private fun setUpOnObservable(){
-        viewModelImage.imageList.observe(this, Observer { })
+        viewModelImage.imageList.observe(this, Observer { itemList ->
+            imagesAdapter.setDataList(itemList)
+            binding.txtImage.text = "Imagenes: ${itemList.size}"
+        })
     }
 }
